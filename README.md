@@ -38,6 +38,7 @@ java Main
 - **Listagem por categoria**
 - **Próximos eventos**, **eventos em andamento** e **já ocorridos**
 - **Eventos do dia** (exibidos ao iniciar)
+- **Edição e exclusão** de **eventos** e **usuários** (prompts permitem **ENTER** para manter valor atual)
 - **Persistência** em `users.data` e `events.data` (CSV simples com escape de `;`)
 
 ---
@@ -52,8 +53,12 @@ java Main
 6) Ver próximos eventos
 7) Ver eventos EM ANDAMENTO
 8) Meus eventos + Cancelar participação
-9) Salvar agora
-10) Recarregar do arquivo
+9) Editar evento
+10) Excluir evento
+11) Editar usuário
+12) Excluir usuário
+13) Salvar agora
+14) Recarregar do arquivo
 0) Sair (salva automaticamente)
 ```
 
@@ -107,7 +112,6 @@ Nenhum evento para hoje.
 ---
 
 ## Roadmap
-- Editar/Excluir usuários e eventos
 - Busca por cidade/bairro
 - Exportar CSV/relatórios
 - Organização em pacotes (MVC)

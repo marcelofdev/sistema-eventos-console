@@ -5,11 +5,11 @@ import java.util.List;
 public class Evento {
     private int id;
     private String nome;
-    private String endereco;   // NOVO: obrigatório no requisito
+    private String endereco;   // obrigatório
     private String categoria;
     private String descricao;
     private LocalDateTime horario; // início
-    private int duracaoMinutos;    // NOVO: para saber se está ocorrendo agora
+    private int duracaoMinutos;    // para saber se está ocorrendo agora
     private List<String> participantes = new ArrayList<>(); // nomes
 
     public Evento(int id, String nome, String endereco, String categoria, String descricao,
@@ -31,6 +31,14 @@ public class Evento {
     public LocalDateTime getHorario() { return horario; }
     public int getDuracaoMinutos() { return duracaoMinutos; }
     public List<String> getParticipantes() { return participantes; }
+
+    // ==== SETTERS para edição ====
+    public void setNome(String nome) { this.nome = nome; }
+    public void setEndereco(String endereco) { this.endereco = endereco; }
+    public void setCategoria(String categoria) { this.categoria = categoria; }
+    public void setDescricao(String descricao) { this.descricao = descricao; }
+    public void setHorario(LocalDateTime horario) { this.horario = horario; }
+    public void setDuracaoMinutos(int duracaoMinutos) { this.duracaoMinutos = duracaoMinutos; }
 
     public void adicionarParticipante(String nomeUsuario) {
         if (!participantes.contains(nomeUsuario)) participantes.add(nomeUsuario);
@@ -56,7 +64,7 @@ public class Evento {
     }
 
     // ===== Persistência CSV =====
-    // Formato novo: id;nome;endereco;categoria;descricao;inicioISO;duracao;participantesCSV
+    // Formato: id;nome;endereco;categoria;descricao;inicioISO;duracao;participantesCSV
     public String toCsv() {
         String parts = String.join(",", participantes).replace(";", "\\;");
         return id + ";" + esc(nome) + ";" + esc(endereco) + ";" + esc(categoria) + ";" +
@@ -68,27 +76,19 @@ public class Evento {
         try {
             if (p.length >= 7) {
                 int id = Integer.parseInt(p[0]);
-                String nome = unesc(p[1]);
-                String end = unesc(p[2]);
-                String cat = unesc(p[3]);
-                String desc = unesc(p[4]);
-                LocalDateTime inicio = LocalDateTime.parse(p[5]);
-                int dur = Integer.parseInt(p[6]);
-                Evento e = new Evento(id, nome, end, cat, desc, inicio, dur);
+                Evento e = new Evento(id, unesc(p[1]), unesc(p[2]), unesc(p[3]),
+                        unesc(p[4]), LocalDateTime.parse(p[5]), Integer.parseInt(p[6]));
                 if (p.length >= 8 && !p[7].isEmpty()) {
-                    for (String nomePart : p[7].split(",")) if (!nomePart.isBlank()) e.participantes.add(nomePart);
+                    for (String nome : p[7].split(",")) if (!nome.isBlank()) e.participantes.add(nome);
                 }
                 return e;
             } else {
                 // BACKCOMPAT (versões antigas sem endereço/duração)
                 int id = Integer.parseInt(p[0]);
-                String nome = unesc(p[1]);
-                String cat = unesc(p[2]);
-                String desc = unesc(p[3]);
-                LocalDateTime inicio = LocalDateTime.parse(p[4]);
-                Evento e = new Evento(id, nome, "", cat, desc, inicio, 120);
+                Evento e = new Evento(id, unesc(p[1]), "", unesc(p[2]), unesc(p[3]),
+                        LocalDateTime.parse(p[4]), 120);
                 if (p.length >= 6 && !p[5].isEmpty()) {
-                    for (String nomePart : p[5].split(",")) if (!nomePart.isBlank()) e.participantes.add(nomePart);
+                    for (String nome : p[5].split(",")) if (!nome.isBlank()) e.participantes.add(nome);
                 }
                 return e;
             }

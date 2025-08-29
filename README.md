@@ -59,6 +59,8 @@ java Main
 12) Excluir usuário
 13) Salvar agora
 14) Recarregar do arquivo
+15) Buscar eventos por endereço
+16) Eventos na minha região (por usuário)
 0) Sair (salva automaticamente)
 ```
 

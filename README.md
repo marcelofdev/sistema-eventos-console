@@ -54,6 +54,12 @@ java Main
 ├── Utils.java
 └── .gitignore
 ```
+## Diagrama de Classes (UML)
+Arquivo: `diagram.puml` (PlantUML).  
+Você pode visualizar no VS Code com a extensão **PlantUML** ou gerar uma imagem e salvar em `docs/SistemaEventos.png`.
+
+![UML](docs/SistemaEventos.png)
+
 
 ## Persistência de dados
 - `users.data` – usuários (CSV com escape de `;`)

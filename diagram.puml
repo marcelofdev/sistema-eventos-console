@@ -1,0 +1,57 @@
+@startuml SistemaEventos
+skinparam classAttributeIconSize 0
+title Sistema de Eventos – Diagrama de Classes
+
+class Usuario {
+  - id: int
+  - nome: String
+  - endereco: String
+  - categoria: String
+  - descricao: String
+  + getId(): int
+  + getNome(): String
+  + getEndereco(): String
+  + getCategoria(): String
+  + getDescricao(): String
+}
+
+class Evento {
+  - id: int
+  - nome: String
+  - endereco: String
+  - categoria: String
+  - descricao: String
+  - horario: LocalDateTime
+  - duracaoMinutos: int
+  - participantes: List<String>
+  + adicionarParticipante(nomeUsuario: String): void
+  + removerParticipante(nomeUsuario: String): void
+  + emAndamento(): boolean
+  + jaOcorreu(): boolean
+}
+
+class SistemaEventos {
+  - usuarios: List<Usuario>
+  - eventos: List<Evento>
+  {static} CATEGORIAS: String[]
+  + cadastrarUsuario(nome: String, endereco: String, categoria: String, descricao: String): Usuario
+  + cadastrarEvento(nome: String, endereco: String, categoria: String, descricao: String, horario: LocalDateTime, duracaoMinutos: int): Evento
+  + confirmarPresenca(u: Usuario, e: Evento): void
+  + cancelarPresenca(u: Usuario, e: Evento): void
+  + filtrarPorCategoria(categoria: String): List<Evento>
+  + proximosEventos(): List<Evento>
+  + emAndamento(): List<Evento>
+  + jaOcorreram(): List<Evento>
+  + eventosDoDia(): List<Evento>
+  + eventosDoUsuario(nomeUsuario: String): List<Evento>
+  + salvar(usersPath: String, eventsPath: String): void
+  + carregar(usersPath: String, eventsPath: String): void
+}
+
+SistemaEventos "1" o-- "*" Usuario
+SistemaEventos "1" o-- "*" Evento
+
+note right of Evento
+  participantes armazenados como nomes (List<String>)
+end note
+@enduml

@@ -3,11 +3,17 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Main {
-    private static final String USERS_FILE = "users.data";
-    private static final String EVENTS_FILE = "events.data";
+    // -> salva em ./data/
+    private static final String DATA_DIR    = "data";
+    private static final String USERS_FILE  = DATA_DIR + "/users.data";
+    private static final String EVENTS_FILE = DATA_DIR + "/events.data";
 
     public static void main(String[] args) {
         SistemaEventos sistema = new SistemaEventos();
+
+        // garante que a pasta existe
+        new java.io.File(DATA_DIR).mkdirs();
+
         try { sistema.carregar(USERS_FILE, EVENTS_FILE); }
         catch (Exception e) { System.out.println("Nenhum arquivo carregado (primeira execução)."); }
 
@@ -79,28 +85,28 @@ public class Main {
         var u = s.cadastrarUsuario(nome, end, cat, desc);
         System.out.println("Usuário criado: " + u);
     }
+
     private static void buscarPorEndereco(Scanner sc, SistemaEventos s) {
-    System.out.print("Digite parte do endereço (cidade, bairro ou rua): ");
-    String termo = sc.nextLine().trim();
-    var lista = s.buscarPorEndereco(termo);
-    if (lista.isEmpty()) System.out.println("Nenhum evento encontrado para \"" + termo + "\".");
-    else listarEventos(lista);
+        System.out.print("Digite parte do endereço (cidade, bairro ou rua): ");
+        String termo = sc.nextLine().trim();
+        var lista = s.buscarPorEndereco(termo);
+        if (lista.isEmpty()) System.out.println("Nenhum evento encontrado para \"" + termo + "\".");
+        else listarEventos(lista);
     }
 
     private static void eventosDaMinhaRegiao(Scanner sc, SistemaEventos s) {
-    if (s.getUsuarios().isEmpty()) { System.out.println("Cadastre um usuário primeiro."); return; }
-    System.out.println("\n-- Usuários --");
-    s.getUsuarios().forEach(System.out::println);
-    int uid = lerInteiro(sc, "ID do usuário: ");
-    var u = s.buscarUsuarioPorId(uid);
-    if (u == null) { System.out.println("Usuário não encontrado."); return; }
+        if (s.getUsuarios().isEmpty()) { System.out.println("Cadastre um usuário primeiro."); return; }
+        System.out.println("\n-- Usuários --");
+        s.getUsuarios().forEach(System.out::println);
+        int uid = lerInteiro(sc, "ID do usuário: ");
+        var u = s.buscarUsuarioPorId(uid);
+        if (u == null) { System.out.println("Usuário não encontrado."); return; }
 
-    System.out.println("Buscando por endereço do usuário: " + u.getEndereco());
-    var lista = s.eventosNaMesmaRegiao(u);
-    if (lista.isEmpty()) System.out.println("Nenhum evento encontrado na região do usuário.");
-    else listarEventos(lista);
+        System.out.println("Buscando por endereço do usuário: " + u.getEndereco());
+        var lista = s.eventosNaMesmaRegiao(u);
+        if (lista.isEmpty()) System.out.println("Nenhum evento encontrado na região do usuário.");
+        else listarEventos(lista);
     }
-
 
     private static void cadastrarEvento(Scanner sc, SistemaEventos s) {
         System.out.print("Nome do evento: "); String nome = sc.nextLine();

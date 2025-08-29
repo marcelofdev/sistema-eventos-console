@@ -33,6 +33,8 @@ public class Main {
             System.out.println("12) Excluir usuário");
             System.out.println("13) Salvar agora");
             System.out.println("14) Recarregar do arquivo");
+            System.out.println("15) Buscar eventos por endereço");
+            System.out.println("16) Eventos na minha região (por usuário)");
             System.out.println("0) Sair (salva automaticamente)");
             System.out.print("Escolha: ");
             String op = sc.nextLine().trim();
@@ -53,6 +55,8 @@ public class Main {
                     case "12" -> excluirUsuario(sc, sistema);
                     case "13" -> { sistema.salvar(USERS_FILE, EVENTS_FILE); System.out.println("Salvo!"); }
                     case "14" -> { sistema.carregar(USERS_FILE, EVENTS_FILE); System.out.println("Recarregado!"); }
+                    case "15" -> buscarPorEndereco(sc, sistema);
+                    case "16" -> eventosDaMinhaRegiao(sc, sistema);
                     case "0" -> {
                         sistema.salvar(USERS_FILE, EVENTS_FILE);
                         System.out.println("Até mais! Dados salvos.");
@@ -75,6 +79,28 @@ public class Main {
         var u = s.cadastrarUsuario(nome, end, cat, desc);
         System.out.println("Usuário criado: " + u);
     }
+    private static void buscarPorEndereco(Scanner sc, SistemaEventos s) {
+    System.out.print("Digite parte do endereço (cidade, bairro ou rua): ");
+    String termo = sc.nextLine().trim();
+    var lista = s.buscarPorEndereco(termo);
+    if (lista.isEmpty()) System.out.println("Nenhum evento encontrado para \"" + termo + "\".");
+    else listarEventos(lista);
+    }
+
+    private static void eventosDaMinhaRegiao(Scanner sc, SistemaEventos s) {
+    if (s.getUsuarios().isEmpty()) { System.out.println("Cadastre um usuário primeiro."); return; }
+    System.out.println("\n-- Usuários --");
+    s.getUsuarios().forEach(System.out::println);
+    int uid = lerInteiro(sc, "ID do usuário: ");
+    var u = s.buscarUsuarioPorId(uid);
+    if (u == null) { System.out.println("Usuário não encontrado."); return; }
+
+    System.out.println("Buscando por endereço do usuário: " + u.getEndereco());
+    var lista = s.eventosNaMesmaRegiao(u);
+    if (lista.isEmpty()) System.out.println("Nenhum evento encontrado na região do usuário.");
+    else listarEventos(lista);
+    }
+
 
     private static void cadastrarEvento(Scanner sc, SistemaEventos s) {
         System.out.print("Nome do evento: "); String nome = sc.nextLine();

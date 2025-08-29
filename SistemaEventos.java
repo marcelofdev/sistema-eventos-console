@@ -87,6 +87,17 @@ public class SistemaEventos {
                 .sorted(Comparator.comparing(Evento::getHorario))
                 .collect(Collectors.toList());
     }
+    public List<Evento> buscarPorEndereco(String termo) {
+    String t = termo == null ? "" : termo.toLowerCase();
+    return eventos.stream()
+            .filter(e -> e.getEndereco() != null && e.getEndereco().toLowerCase().contains(t))
+            .sorted(Comparator.comparing(Evento::getHorario))
+            .collect(Collectors.toList());
+    }
+    public List<Evento> eventosNaMesmaRegiao(Usuario u) {
+    if (u == null || u.getEndereco() == null) return List.of();
+    return buscarPorEndereco(u.getEndereco());
+    }
     public List<Evento> proximosEventos() {
         LocalDateTime agora = LocalDateTime.now();
         return eventos.stream()

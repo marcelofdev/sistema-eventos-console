@@ -1,5 +1,12 @@
-.vscode/ 
-*.class 
-bin/ 
-out/ 
+# VS Code
+.vscode/
+
+# Artefatos de build
+*.class
+bin/
+out/
+**/out/
+
+# Dados da aplicação (persistência local)
+data/
 *.data

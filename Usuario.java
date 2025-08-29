@@ -19,6 +19,12 @@ public class Usuario {
     public String getCategoria() { return categoria; }
     public String getDescricao() { return descricao; }
 
+    // ==== SETTERS para edição ====
+    public void setNome(String nome) { this.nome = nome; }
+    public void setEndereco(String endereco) { this.endereco = endereco; }
+    public void setCategoria(String categoria) { this.categoria = categoria; }
+    public void setDescricao(String descricao) { this.descricao = descricao; }
+
     @Override
     public String toString() {
         return String.format("[%d] %s | %s | %s | %s", id, nome, endereco, categoria, descricao);
@@ -39,7 +45,6 @@ public class Usuario {
     private static String escape(String s) { return s.replace(";", "\\;"); }
     private static String unescape(String s) { return s.replace("\\;", ";"); }
     private static String[] splitKeepEmpty(String s) {
-        // separa por ; que não esteja escapado
         return s.split("(?<!\\\\);", -1);
     }
 }

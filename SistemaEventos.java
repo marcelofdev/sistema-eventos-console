@@ -34,6 +34,22 @@ public class SistemaEventos {
     public Usuario buscarUsuarioPorId(int id) {
         return usuarios.stream().filter(u -> u.getId() == id).findFirst().orElse(null);
     }
+    public boolean editarUsuario(int id, String nome, String end, String cat, String desc) {
+        Usuario u = buscarUsuarioPorId(id);
+        if (u == null) return false;
+        u.setNome(nome);
+        u.setEndereco(end);
+        u.setCategoria(cat);
+        u.setDescricao(desc);
+        return true;
+    }
+    public boolean excluirUsuario(int id) {
+        Usuario u = buscarUsuarioPorId(id);
+        if (u == null) return false;
+        // remove das listas de participantes
+        for (Evento e : eventos) e.removerParticipante(u.getNome());
+        return usuarios.remove(u);
+    }
 
     // ===== Eventos =====
     public Evento cadastrarEvento(String nome, String endereco, String cat, String desc,
@@ -46,14 +62,31 @@ public class SistemaEventos {
     public Evento buscarEventoPorId(int id) {
         return eventos.stream().filter(e -> e.getId() == id).findFirst().orElse(null);
     }
+    public boolean editarEvento(int id, String nome, String endereco, String cat, String desc,
+                                LocalDateTime horario, int duracaoMin) {
+        Evento e = buscarEventoPorId(id);
+        if (e == null) return false;
+        e.setNome(nome);
+        e.setEndereco(endereco);
+        e.setCategoria(cat);
+        e.setDescricao(desc);
+        e.setHorario(horario);
+        e.setDuracaoMinutos(duracaoMin);
+        return true;
+    }
+    public boolean excluirEvento(int id) {
+        Evento e = buscarEventoPorId(id);
+        if (e == null) return false;
+        return eventos.remove(e);
+    }
 
+    // ===== Consultas =====
     public List<Evento> filtrarPorCategoria(String categoria) {
         return eventos.stream()
                 .filter(e -> e.getCategoria().equalsIgnoreCase(categoria))
                 .sorted(Comparator.comparing(Evento::getHorario))
                 .collect(Collectors.toList());
     }
-
     public List<Evento> proximosEventos() {
         LocalDateTime agora = LocalDateTime.now();
         return eventos.stream()
@@ -98,7 +131,6 @@ public class SistemaEventos {
             for (Evento e : eventos) bw.write(e.toCsv() + System.lineSeparator());
         }
     }
-
     public void carregar(String usersPath, String eventsPath) throws Exception {
         usuarios.clear(); eventos.clear();
         nextUserId = 1; nextEventId = 1;

@@ -27,8 +27,12 @@ public class Main {
             System.out.println("6) Ver próximos eventos");
             System.out.println("7) Ver eventos EM ANDAMENTO");
             System.out.println("8) Meus eventos + Cancelar participação");
-            System.out.println("9) Salvar agora");
-            System.out.println("10) Recarregar do arquivo");
+            System.out.println("9) Editar evento");
+            System.out.println("10) Excluir evento");
+            System.out.println("11) Editar usuário");
+            System.out.println("12) Excluir usuário");
+            System.out.println("13) Salvar agora");
+            System.out.println("14) Recarregar do arquivo");
             System.out.println("0) Sair (salva automaticamente)");
             System.out.print("Escolha: ");
             String op = sc.nextLine().trim();
@@ -43,8 +47,12 @@ public class Main {
                     case "6" -> listarEventos(sistema.proximosEventos());
                     case "7" -> listarEventos(sistema.emAndamento());
                     case "8" -> meusEventosECancelar(sc, sistema);
-                    case "9" -> { sistema.salvar(USERS_FILE, EVENTS_FILE); System.out.println("Salvo!"); }
-                    case "10" -> { sistema.carregar(USERS_FILE, EVENTS_FILE); System.out.println("Recarregado!"); }
+                    case "9" -> editarEvento(sc, sistema);
+                    case "10" -> excluirEvento(sc, sistema);
+                    case "11" -> editarUsuario(sc, sistema);
+                    case "12" -> excluirUsuario(sc, sistema);
+                    case "13" -> { sistema.salvar(USERS_FILE, EVENTS_FILE); System.out.println("Salvo!"); }
+                    case "14" -> { sistema.carregar(USERS_FILE, EVENTS_FILE); System.out.println("Recarregado!"); }
                     case "0" -> {
                         sistema.salvar(USERS_FILE, EVENTS_FILE);
                         System.out.println("Até mais! Dados salvos.");
@@ -72,7 +80,6 @@ public class Main {
         System.out.print("Nome do evento: "); String nome = sc.nextLine();
         System.out.print("Endereço do evento: "); String endereco = sc.nextLine();
 
-        // Categoria entre as predefinidas
         String cat;
         while (true) {
             System.out.println("Categorias disponíveis:");
@@ -85,7 +92,6 @@ public class Main {
         }
 
         System.out.print("Descrição: "); String desc = sc.nextLine();
-
         LocalDateTime quando = lerDataHora(sc);
         int dur = lerInteiroPositivo(sc, "Duração em minutos: ");
 
@@ -144,6 +150,62 @@ public class Main {
         }
     }
 
+    private static void editarEvento(Scanner sc, SistemaEventos s) {
+        listarEventos(s.getEventos());
+        int id = lerInteiro(sc, "ID do evento para editar: ");
+        Evento e = s.buscarEventoPorId(id);
+        if (e == null) { System.out.println("Evento não encontrado."); return; }
+
+        String nome = lerOpcional(sc, "Nome [" + e.getNome() + "]: ", e.getNome());
+        String end  = lerOpcional(sc, "Endereço [" + e.getEndereco() + "]: ", e.getEndereco());
+
+        String cat;
+        while (true) {
+            String cats = String.join(", ", SistemaEventos.CATEGORIAS);
+            cat = lerOpcional(sc, "Categoria [" + e.getCategoria() + "] (" + cats + "): ", e.getCategoria());
+            if (SistemaEventos.categoriaValida(cat)) break;
+            System.out.println("Categoria inválida.");
+        }
+
+        String desc = lerOpcional(sc, "Descrição [" + e.getDescricao() + "]: ", e.getDescricao());
+        LocalDateTime quando = lerDataHoraOpcional(sc, "Data/hora [" + Utils.fmt(e.getHorario()) + "]: ", e.getHorario());
+        int dur = lerInteiroPositivoOpcional(sc, "Duração (min) [" + e.getDuracaoMinutos() + "]: ", e.getDuracaoMinutos());
+
+        if (s.editarEvento(id, nome, end, cat, desc, quando, dur)) System.out.println("Evento atualizado.");
+    }
+
+    private static void excluirEvento(Scanner sc, SistemaEventos s) {
+        listarEventos(s.getEventos());
+        int id = lerInteiro(sc, "ID do evento para excluir: ");
+        System.out.print("Confirma exclusão? (s/N): ");
+        if (sc.nextLine().trim().equalsIgnoreCase("s")) {
+            System.out.println(s.excluirEvento(id) ? "Excluído." : "Não encontrado.");
+        }
+    }
+
+    private static void editarUsuario(Scanner sc, SistemaEventos s) {
+        s.getUsuarios().forEach(System.out::println);
+        int id = lerInteiro(sc, "ID do usuário para editar: ");
+        Usuario u = s.buscarUsuarioPorId(id);
+        if (u == null) { System.out.println("Usuário não encontrado."); return; }
+
+        String nome = lerOpcional(sc, "Nome [" + u.getNome() + "]: ", u.getNome());
+        String end  = lerOpcional(sc, "Endereço [" + u.getEndereco() + "]: ", u.getEndereco());
+        String cat  = lerOpcional(sc, "Categoria [" + u.getCategoria() + "]: ", u.getCategoria());
+        String desc = lerOpcional(sc, "Descrição [" + u.getDescricao() + "]: ", u.getDescricao());
+
+        if (s.editarUsuario(id, nome, end, cat, desc)) System.out.println("Usuário atualizado.");
+    }
+
+    private static void excluirUsuario(Scanner sc, SistemaEventos s) {
+        s.getUsuarios().forEach(System.out::println);
+        int id = lerInteiro(sc, "ID do usuário para excluir: ");
+        System.out.print("Confirma exclusão? (s/N): ");
+        if (sc.nextLine().trim().equalsIgnoreCase("s")) {
+            System.out.println(s.excluirUsuario(id) ? "Excluído." : "Não encontrado.");
+        }
+    }
+
     // === Helpers ===
     private static int lerInteiro(Scanner sc, String prompt) {
         while (true) {
@@ -159,6 +221,18 @@ public class Main {
             System.out.println("Informe um número positivo.");
         }
     }
+    private static int lerInteiroPositivoOpcional(Scanner sc, String prompt, int atual) {
+        while (true) {
+            System.out.print(prompt);
+            String s = sc.nextLine().trim();
+            if (s.isEmpty()) return atual;
+            try {
+                int n = Integer.parseInt(s);
+                if (n > 0) return n;
+            } catch (NumberFormatException ignored) {}
+            System.out.println("Informe número positivo ou ENTER para manter.");
+        }
+    }
     private static LocalDateTime lerDataHora(Scanner sc) {
         while (true) {
             System.out.print("Data e hora (dd/MM/yyyy HH:mm): ");
@@ -166,5 +240,20 @@ public class Main {
             if (dt.isPresent()) return dt.get();
             System.out.println("Formato inválido. Ex.: 25/12/2025 20:30");
         }
+    }
+    private static LocalDateTime lerDataHoraOpcional(Scanner sc, String prompt, LocalDateTime atual) {
+        while (true) {
+            System.out.print(prompt);
+            String s = sc.nextLine().trim();
+            if (s.isEmpty()) return atual;
+            var dt = Utils.tryParse(s);
+            if (dt.isPresent()) return dt.get();
+            System.out.println("Formato inválido. ENTER mantém.");
+        }
+    }
+    private static String lerOpcional(Scanner sc, String prompt, String atual) {
+        System.out.print(prompt);
+        String s = sc.nextLine();
+        return s.isBlank() ? atual : s;
     }
 }

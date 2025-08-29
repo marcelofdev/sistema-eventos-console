@@ -1,10 +1,15 @@
 # Sistema de Eventos (Console – Java)
 
-Protótipo em **Java (POO)** para cadastro e notificação de eventos, com persistência simples em arquivo.
+Protótipo em **Java (POO)** para cadastro e notificação de eventos, com persistência simples em arquivo.  
+O projeto roda em **console** e está preparado para uso no **VS Code**.
+
+---
 
 ## Requisitos
 - **JDK 24+**
-- **VS Code** com *Extension Pack for Java* (ou qualquer IDE de sua preferência)
+- **Visual Studio Code** com *Extension Pack for Java* (ou outra IDE de sua preferência)
+
+---
 
 ## Como executar
 
@@ -23,26 +28,36 @@ java Main
 
 > **Formato de data aceito:** `dd/MM/yyyy HH:mm` (ex.: `25/12/2025 20:30`)
 
+---
+
 ## Funcionalidades
-- Cadastro de **Usuários** e **Eventos**
-- **Confirmação de presença** (usuário ↔ evento)
-- **Filtro por categoria** de evento
-- **Próximos eventos** (a partir de agora)
+- Cadastro de **Usuários** e **Eventos**  
+  (evento com **nome, endereço, categoria, horário, descrição** e **duração** em minutos)
+- **Categorias delimitadas**: `Festa`, `Esporte`, `Show`, `Cultural`, `Tecnologia`, `Outros`
+- **Confirmação** e **cancelamento** de presença por usuário/evento
+- **Listagem por categoria**
+- **Próximos eventos**, **eventos em andamento** e **já ocorridos**
 - **Eventos do dia** (exibidos ao iniciar)
-- **Persistência** dos dados em `users.data` e `events.data` (CSV simples)
+- **Persistência** em `users.data` e `events.data` (CSV simples com escape de `;`)
+
+---
 
 ## Menu (opções do programa)
 ```
 1) Cadastrar usuário
 2) Cadastrar evento
 3) Listar eventos
-4) Filtrar eventos por categoria
+4) Filtrar por categoria
 5) Confirmar presença em evento
 6) Ver próximos eventos
-7) Salvar agora
-8) Recarregar do arquivo
+7) Ver eventos EM ANDAMENTO
+8) Meus eventos + Cancelar participação
+9) Salvar agora
+10) Recarregar do arquivo
 0) Sair (salva automaticamente)
 ```
+
+---
 
 ## Estrutura do projeto
 ```
@@ -52,19 +67,30 @@ java Main
 ├── SistemaEventos.java
 ├── Usuario.java
 ├── Utils.java
+├── diagram.puml
+├── docs/
+│   └── SistemaEventos.png
 └── .gitignore
 ```
+
+---
+
 ## Diagrama de Classes (UML)
-Arquivo: `diagram.puml` (PlantUML).  
-Você pode visualizar no VS Code com a extensão **PlantUML** ou gerar uma imagem e salvar em `docs/SistemaEventos.png`.
+Arquivo-fonte: `diagram.puml` (PlantUML).  
+Você pode visualizar no VS Code (extensão **PlantUML**) ou gerar a imagem em `docs/SistemaEventos.png`.
 
-![UML](docs/SistemaEventos.png)
+<p align="center">
+  <img src="docs/SistemaEventos.png" alt="UML - Sistema de Eventos" width="900">
+</p>
 
+---
 
 ## Persistência de dados
-- `users.data` – usuários (CSV com escape de `;`)
-- `events.data` – eventos + participantes  
-> Os `.data` estão ignorados via `.gitignore`. Se precisar versioná-los, remova `*.data` do `.gitignore`.
+- `users.data` – usuários  
+- `events.data` – eventos (inclui lista de participantes)
+- Os `.data` estão ignorados via `.gitignore`. Se precisar versioná-los, remova `*.data` do `.gitignore`.
+
+---
 
 ## Exemplo de execução
 ```text
@@ -74,8 +100,11 @@ Nenhum evento para hoje.
 ===== MENU =====
 1) Cadastrar usuário
 2) Cadastrar evento
+3) Listar eventos
 ...
 ```
+
+---
 
 ## Roadmap
 - Editar/Excluir usuários e eventos
@@ -83,6 +112,8 @@ Nenhum evento para hoje.
 - Exportar CSV/relatórios
 - Organização em pacotes (MVC)
 - Testes automatizados
+
+---
 
 ## Como contribuir
 1. Crie uma *branch*: `git checkout -b feature/sua-feature`

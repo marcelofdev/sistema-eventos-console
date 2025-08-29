@@ -15,6 +15,15 @@ public class SistemaEventos {
     private int nextUserId = 1;
     private int nextEventId = 1;
 
+    // Categorias delimitadas (requisito)
+    public static final String[] CATEGORIAS = {
+        "Festa", "Esporte", "Show", "Cultural", "Tecnologia", "Outros"
+    };
+    public static boolean categoriaValida(String cat) {
+        for (String c : CATEGORIAS) if (c.equalsIgnoreCase(cat)) return true;
+        return false;
+    }
+
     // ===== Usuários =====
     public Usuario cadastrarUsuario(String nome, String end, String cat, String desc) {
         Usuario u = new Usuario(nextUserId++, nome, end, cat, desc);
@@ -22,14 +31,21 @@ public class SistemaEventos {
         return u;
     }
     public List<Usuario> getUsuarios() { return usuarios; }
+    public Usuario buscarUsuarioPorId(int id) {
+        return usuarios.stream().filter(u -> u.getId() == id).findFirst().orElse(null);
+    }
 
     // ===== Eventos =====
-    public Evento cadastrarEvento(String nome, String cat, String desc, LocalDateTime horario) {
-        Evento e = new Evento(nextEventId++, nome, cat, desc, horario);
+    public Evento cadastrarEvento(String nome, String endereco, String cat, String desc,
+                                  LocalDateTime horario, int duracaoMin) {
+        Evento e = new Evento(nextEventId++, nome, endereco, cat, desc, horario, duracaoMin);
         eventos.add(e);
         return e;
     }
     public List<Evento> getEventos() { return eventos; }
+    public Evento buscarEventoPorId(int id) {
+        return eventos.stream().filter(e -> e.getId() == id).findFirst().orElse(null);
+    }
 
     public List<Evento> filtrarPorCategoria(String categoria) {
         return eventos.stream()
@@ -38,20 +54,23 @@ public class SistemaEventos {
                 .collect(Collectors.toList());
     }
 
-    public Evento buscarEventoPorId(int id) {
-        return eventos.stream().filter(e -> e.getId() == id).findFirst().orElse(null);
-    }
-    public Usuario buscarUsuarioPorId(int id) {
-        return usuarios.stream().filter(u -> u.getId() == id).findFirst().orElse(null);
-    }
-
     public List<Evento> proximosEventos() {
+        LocalDateTime agora = LocalDateTime.now();
         return eventos.stream()
-                .filter(e -> !e.jaOcorreu())
+                .filter(e -> e.getHorario().isAfter(agora))
                 .sorted(Comparator.comparing(Evento::getHorario))
                 .collect(Collectors.toList());
     }
-
+    public List<Evento> emAndamento() {
+        return eventos.stream().filter(Evento::emAndamento)
+                .sorted(Comparator.comparing(Evento::getHorario))
+                .collect(Collectors.toList());
+    }
+    public List<Evento> jaOcorreram() {
+        return eventos.stream().filter(Evento::jaOcorreu)
+                .sorted(Comparator.comparing(Evento::getHorario))
+                .collect(Collectors.toList());
+    }
     public List<Evento> eventosDoDia() {
         LocalDate hoje = LocalDate.now();
         return eventos.stream()
@@ -59,6 +78,16 @@ public class SistemaEventos {
                 .sorted(Comparator.comparing(Evento::getHorario))
                 .collect(Collectors.toList());
     }
+    public List<Evento> eventosDoUsuario(String nomeUsuario) {
+        return eventos.stream()
+                .filter(e -> e.getParticipantes().contains(nomeUsuario))
+                .sorted(Comparator.comparing(Evento::getHorario))
+                .collect(Collectors.toList());
+    }
+
+    // Participação
+    public void confirmarPresenca(Usuario u, Evento e) { e.adicionarParticipante(u.getNome()); }
+    public void cancelarPresenca(Usuario u, Evento e) { e.removerParticipante(u.getNome()); }
 
     // ===== Persistência =====
     public void salvar(String usersPath, String eventsPath) throws Exception {

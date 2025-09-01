@@ -46,6 +46,7 @@ public class Main {
             System.out.println("17) Exportar CSV - todos os eventos");
             System.out.println("18) Exportar CSV - meus eventos (por usuário)");
             System.out.println("19) Exportar CSV - usuários");
+            System.out.println("20) Ver eventos já ocorridos");
             System.out.println("0) Sair (salva automaticamente)");
             System.out.print("Escolha: ");
             String op = sc.nextLine().trim();
@@ -71,6 +72,7 @@ public class Main {
                     case "17" -> exportarTodosEventos(sc, sistema);
                     case "18" -> exportarMeusEventos(sc, sistema);
                     case "19" -> exportarUsuarios(sistema);
+                    case "20" -> listarEventos(sistema.jaOcorreram());
                     case "0" -> {
                         sistema.salvar(USERS_FILE, EVENTS_FILE);
                         System.out.println("Até mais! Dados salvos.");

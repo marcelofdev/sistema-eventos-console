@@ -64,6 +64,7 @@ java Main
 17) Exportar CSV - todos os eventos
 18) Exportar CSV - meus eventos (por usuário)
 19) Exportar CSV - todos os usuários
+20) Ver eventos já ocorridos
 0) Sair (salva automaticamente)
 ```
 

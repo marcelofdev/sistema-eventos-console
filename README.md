@@ -61,6 +61,8 @@ java Main
 14) Recarregar do arquivo
 15) Buscar eventos por endereço
 16) Eventos na minha região (por usuário)
+17) Exportar CSV - todos os eventos
+18) Exportar CSV - meus eventos (por usuário)
 0) Sair (salva automaticamente)
 ```
 

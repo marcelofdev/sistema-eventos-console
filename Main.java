@@ -5,6 +5,7 @@ import java.util.Scanner;
 public class Main {
     // -> salva em ./data/
     private static final String DATA_DIR    = "data";
+    private static final String REPORTS_DIR = DATA_DIR + "/reports";
     private static final String USERS_FILE  = DATA_DIR + "/users.data";
     private static final String EVENTS_FILE = DATA_DIR + "/events.data";
 
@@ -13,6 +14,7 @@ public class Main {
 
         // garante que a pasta existe
         new java.io.File(DATA_DIR).mkdirs();
+        new java.io.File(REPORTS_DIR).mkdirs();
 
         try { sistema.carregar(USERS_FILE, EVENTS_FILE); }
         catch (Exception e) { System.out.println("Nenhum arquivo carregado (primeira execução)."); }
@@ -41,6 +43,8 @@ public class Main {
             System.out.println("14) Recarregar do arquivo");
             System.out.println("15) Buscar eventos por endereço");
             System.out.println("16) Eventos na minha região (por usuário)");
+            System.out.println("17) Exportar CSV - todos os eventos");
+            System.out.println("18) Exportar CSV - meus eventos (por usuário)");
             System.out.println("0) Sair (salva automaticamente)");
             System.out.print("Escolha: ");
             String op = sc.nextLine().trim();
@@ -63,6 +67,8 @@ public class Main {
                     case "14" -> { sistema.carregar(USERS_FILE, EVENTS_FILE); System.out.println("Recarregado!"); }
                     case "15" -> buscarPorEndereco(sc, sistema);
                     case "16" -> eventosDaMinhaRegiao(sc, sistema);
+                    case "17" -> exportarTodosEventos(sc, sistema);
+                    case "18" -> exportarMeusEventos(sc, sistema);
                     case "0" -> {
                         sistema.salvar(USERS_FILE, EVENTS_FILE);
                         System.out.println("Até mais! Dados salvos.");
@@ -237,6 +243,44 @@ public class Main {
             System.out.println(s.excluirUsuario(id) ? "Excluído." : "Não encontrado.");
         }
     }
+
+    private static void exportarTodosEventos(Scanner sc, SistemaEventos s) {
+    var lista = s.getEventos();
+    if (lista.isEmpty()) { System.out.println("Não há eventos para exportar."); return; }
+    String file = REPORTS_DIR + "/eventos_" + ts() + ".csv";
+    try {
+        s.exportEventosCsv(file, lista);
+        System.out.println("Relatório gerado: " + file);
+    } catch (Exception ex) {
+        System.out.println("Falha ao exportar: " + ex.getMessage());
+    }
+}
+
+private static void exportarMeusEventos(Scanner sc, SistemaEventos s) {
+    if (s.getUsuarios().isEmpty()) { System.out.println("Cadastre um usuário primeiro."); return; }
+    s.getUsuarios().forEach(System.out::println);
+    int uid = lerInteiro(sc, "ID do usuário: ");
+    var u = s.buscarUsuarioPorId(uid);
+    if (u == null) { System.out.println("Usuário não encontrado."); return; }
+
+    var lista = s.eventosDoUsuario(u.getNome());
+    if (lista.isEmpty()) { System.out.println("O usuário não possui eventos confirmados."); return; }
+
+    String file = REPORTS_DIR + "/meus_eventos_u" + u.getId() + "_" + ts() + ".csv";
+    try {
+        s.exportEventosCsv(file, lista);
+        System.out.println("Relatório gerado: " + file);
+    } catch (Exception ex) {
+        System.out.println("Falha ao exportar: " + ex.getMessage());
+    }
+}
+
+    // timestamp p/ nomes de arquivos
+    private static String ts() {
+        return java.time.LocalDateTime.now().format(
+            java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd_HHmm"));
+}
+
 
     // === Helpers ===
     private static int lerInteiro(Scanner sc, String prompt) {

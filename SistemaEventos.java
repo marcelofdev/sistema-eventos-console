@@ -129,6 +129,56 @@ public class SistemaEventos {
                 .collect(Collectors.toList());
     }
 
+    // ===== Exportação CSV =====
+    
+    // exportacão de usuários
+    public void exportEventosCsv(String path, List<Evento> lista) throws Exception {
+    try (BufferedWriter bw = new BufferedWriter(new FileWriter(path))) {
+        // Cabeçalho
+        bw.write("id;nome;endereco;categoria;descricao;inicio;duracaoMin;participantes");
+        bw.newLine();
+
+        // Uma linha por evento
+        for (Evento e : lista) {
+            String participantes = String.join("|", e.getParticipantes()).replace(";", "\\;");
+            bw.write(
+                e.getId() + ";" +
+                esc(e.getNome()) + ";" +
+                esc(e.getEndereco()) + ";" +
+                esc(e.getCategoria()) + ";" +
+                esc(e.getDescricao()) + ";" +
+                Utils.fmt(e.getHorario()) + ";" +
+                e.getDuracaoMinutos() + ";" +
+                participantes
+            );
+            bw.newLine();
+        }
+    }
+}
+
+        // helper 
+    private static String esc(String s) {
+    return s == null ? "" : s.replace(";", "\\;");
+}
+
+        // exportacão de usuários
+    public void exportUsuariosCsv(String path, List<Usuario> lista) throws Exception {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(path))) {
+            bw.write("id;nome;endereco;categoria;descricao");
+            bw.newLine();
+            for (Usuario u : lista) {
+                bw.write(u.getId() + ";" +
+                        esc(u.getNome()) + ";" +
+                        esc(u.getEndereco()) + ";" +
+                        esc(u.getCategoria()) + ";" +
+                        esc(u.getDescricao()));
+                bw.newLine();
+            }
+        }
+    }
+    
+    
+
     // Participação
     public void confirmarPresenca(Usuario u, Evento e) { e.adicionarParticipante(u.getNome()); }
     public void cancelarPresenca(Usuario u, Evento e) { e.removerParticipante(u.getNome()); }

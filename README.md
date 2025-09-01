@@ -5,26 +5,45 @@ O projeto roda em **console** e está preparado para uso no **VS Code**.
 
 ---
 
+## Download rápido (JAR)
+
+Baixe a versão pronta em **Releases** (`sistema-eventos.jar`) e execute:
+
+~~~bash
+# Windows / Linux / macOS (requer Java instalado)
+java -jar sistema-eventos.jar
+~~~
+
+> Dica: rode o `.jar` a partir da **raiz do projeto** (ou de uma pasta vazia).  
+> A aplicação criará a pasta `data/` para salvar `users.data` e `events.data`.
+
+---
+
 ## Requisitos
-- **JDK 24+**
+- **JDK 24+** (para compilar) ou **Java Runtime** para rodar o `.jar`
 - **Visual Studio Code** com *Extension Pack for Java* (ou outra IDE de sua preferência)
 
 ---
 
 ## Como executar
 
-### Via VS Code
+### (A) Via JAR (sem compilar)
+~~~bash
+java -jar sistema-eventos.jar
+~~~
+
+### (B) Via VS Code
 1. Abra a pasta do projeto no VS Code.
 2. Abra `Main.java` e clique em **Run** acima do método `main`.
 
-### Via Terminal
-```bash
+### (C) Via Terminal (compilando fontes)
+~~~bash
 # compilar (na pasta do projeto)
 javac *.java
 
 # executar
 java Main
-```
+~~~
 
 > **Formato de data aceito:** `dd/MM/yyyy HH:mm` (ex.: `25/12/2025 20:30`)
 
@@ -40,11 +59,12 @@ java Main
 - **Eventos do dia** (exibidos ao iniciar)
 - **Edição e exclusão** de **eventos** e **usuários** (prompts permitem **ENTER** para manter valor atual)
 - **Persistência** em `users.data` e `events.data` (CSV simples com escape de `;`)
+- **Exportação CSV**: todos os eventos, *meus eventos* (por usuário) e **usuários** (arquivos em `data/reports/`)
 
 ---
 
 ## Menu (opções do programa)
-```
+~~~
 1) Cadastrar usuário
 2) Cadastrar evento
 3) Listar eventos
@@ -66,12 +86,12 @@ java Main
 19) Exportar CSV - todos os usuários
 20) Ver eventos já ocorridos
 0) Sair (salva automaticamente)
-```
+~~~
 
 ---
 
 ## Estrutura do projeto
-```
+~~~
 .
 ├── Evento.java
 ├── Main.java
@@ -82,7 +102,7 @@ java Main
 ├── docs/
 │   └── SistemaEventos.png
 └── .gitignore
-```
+~~~
 
 ---
 
@@ -99,12 +119,13 @@ Você pode visualizar no VS Code (extensão **PlantUML**) ou gerar a imagem em `
 ## Persistência de dados
 - `users.data` – usuários  
 - `events.data` – eventos (inclui lista de participantes)
-- Os `.data` estão ignorados via `.gitignore`. Se precisar versioná-los, remova `*.data` do `.gitignore`.
+- Os `.data` ficam em `./data/` e estão **ignorados** via `.gitignore`.  
+  Se precisar versioná-los, remova `*.data` do `.gitignore`.
 
 ---
 
 ## Exemplo de execução
-```text
+~~~text
 === Eventos de HOJE ===
 Nenhum evento para hoje.
 
@@ -113,15 +134,15 @@ Nenhum evento para hoje.
 2) Cadastrar evento
 3) Listar eventos
 ...
-```
+~~~
 
 ---
 
 ## Roadmap
-- Busca por cidade/bairro
-- Exportar CSV/relatórios
+- Filtro por período (entre datas)
+- Relatórios por categoria
 - Organização em pacotes (MVC)
-- Testes automatizados
+- Testes automatizados (JUnit)
 
 ---
 

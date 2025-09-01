@@ -7,6 +7,10 @@ bin/
 out/
 **/out/
 
+# Binários/artefatos de release
+*.jar
+MANIFEST.MF
+
 # Dados da aplicação (persistência local)
 data/
 *.data

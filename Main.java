@@ -45,6 +45,7 @@ public class Main {
             System.out.println("16) Eventos na minha região (por usuário)");
             System.out.println("17) Exportar CSV - todos os eventos");
             System.out.println("18) Exportar CSV - meus eventos (por usuário)");
+            System.out.println("19) Exportar CSV - usuários");
             System.out.println("0) Sair (salva automaticamente)");
             System.out.print("Escolha: ");
             String op = sc.nextLine().trim();
@@ -69,6 +70,7 @@ public class Main {
                     case "16" -> eventosDaMinhaRegiao(sc, sistema);
                     case "17" -> exportarTodosEventos(sc, sistema);
                     case "18" -> exportarMeusEventos(sc, sistema);
+                    case "19" -> exportarUsuarios(sistema);
                     case "0" -> {
                         sistema.salvar(USERS_FILE, EVENTS_FILE);
                         System.out.println("Até mais! Dados salvos.");
@@ -274,6 +276,19 @@ private static void exportarMeusEventos(Scanner sc, SistemaEventos s) {
         System.out.println("Falha ao exportar: " + ex.getMessage());
     }
 }
+
+private static void exportarUsuarios(SistemaEventos s) {
+    var lista = s.getUsuarios();
+    if (lista.isEmpty()) { System.out.println("Não há usuários para exportar."); return; }
+    String file = REPORTS_DIR + "/usuarios_" + ts() + ".csv";
+    try {
+        s.exportUsuariosCsv(file, lista);
+        System.out.println("Relatório gerado: " + file);
+    } catch (Exception ex) {
+        System.out.println("Falha ao exportar: " + ex.getMessage());
+    }
+}
+
 
     // timestamp p/ nomes de arquivos
     private static String ts() {

@@ -63,6 +63,7 @@ java Main
 16) Eventos na minha região (por usuário)
 17) Exportar CSV - todos os eventos
 18) Exportar CSV - meus eventos (por usuário)
+19) Exportar CSV - todos os usuários
 0) Sair (salva automaticamente)
 ```
 
